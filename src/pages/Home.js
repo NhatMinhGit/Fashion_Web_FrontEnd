@@ -2,114 +2,22 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const Home = () => {
-  const [data, setData] = useState({});
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+function Home() {
+  const [user, setUser] = useState({ username: "Guest", role: "N/A" });
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const responseData = await axios.get(
-          "http://localhost:8080/api/user/data",
-          {
-            withCredentials: true,
-          }
-        );
-        setData(responseData.data);
-        setLoading(false);
-      } catch (err) {
-        setError("Failed to load user data");
-        setLoading(false);
-        if (err.response?.status === 401) {
-          navigate("/login");
-        }
-      }
-    };
-    fetchData();
-  }, [navigate]);
-
-  if (loading) return <div className="text-center mt-5">Loading...</div>;
-  if (error)
-    return <div className="alert alert-danger text-center mt-5">{error}</div>;
-
-  const {
-    currentUser,
-    products,
-    discountPercents,
-    productVariantImages,
-    deepDiscountProducts,
-  } = data;
+    axios
+      .get("http://localhost:8080/api/user", { withCredentials: true })
+      .then((response) => setUser(response.data))
+      .catch((error) => console.error("Error fetching user:", error));
+  }, []);
 
   return (
-    <div className="container mt-4">
-      <h1 className="mb-4">Welcome, {currentUser?.email || "User"}!</h1>
-
-      <h2 className="text-center mb-3">Sản phẩm giảm giá sâu</h2>
-      <div className="row">
-        {deepDiscountProducts?.map((product) => (
-          <div key={product.id} className="col-md-4 mb-4">
-            <div className="card h-100">
-              <img
-                src={
-                  productVariantImages?.[product.id]?.[
-                    Object.keys(productVariantImages[product.id])[0]
-                  ]?.[0] || "/placeholder.jpg"
-                }
-                alt={product.name}
-                className="card-img-top"
-                style={{ height: "200px", objectFit: "cover" }}
-              />
-              <div className="card-body">
-                <h5 className="card-title">{product.name}</h5>
-                <p className="card-text">Giá gốc: {product.price} VND</p>
-                <p className="card-text text-primary">
-                  Giá rẻ hơn: {product.effectivePrice} VND
-                </p>
-                {discountPercents?.[product.id] > 0 && (
-                  <p className="card-text text-danger">
-                    Giảm giá: {discountPercents[product.id]}%
-                  </p>
-                )}
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <h2 className="text-center mb-3">Tất cả sản phẩm</h2>
-      <div className="row">
-        {products?.map((product) => (
-          <div key={product.id} className="col-md-4 mb-4">
-            <div className="card h-100">
-              <img
-                src={
-                  productVariantImages?.[product.id]?.[
-                    Object.keys(productVariantImages[product.id])[0]
-                  ]?.[0] || "/placeholder.jpg"
-                }
-                alt={product.name}
-                className="card-img-top"
-                style={{ height: "200px", objectFit: "cover" }}
-              />
-              <div className="card-body">
-                <h5 className="card-title">{product.name}</h5>
-                <p className="card-text">Giá gốc: {product.price} VND</p>
-                <p className="card-text text-primary">
-                  Giá rẻ hơn: {product.effectivePrice} VND
-                </p>
-                {discountPercents?.[product.id] > 0 && (
-                  <p className="card-text text-danger">
-                    Giảm giá: {discountPercents[product.id]}%
-                  </p>
-                )}
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-
+    <div style={styles.container}>
+      <h1>Welcome to the Home Page</h1>
+      <p>Username: {user.username}</p>
+      <p>Role: {user.role}</p>
       <button
         onClick={() =>
           axios
@@ -126,6 +34,19 @@ const Home = () => {
       </button>
     </div>
   );
+}
+
+const styles = {
+  container: {
+    fontFamily: "Arial, sans-serif",
+    textAlign: "center",
+    marginTop: "50px",
+    maxWidth: "600px",
+    margin: "0 auto",
+    padding: "20px",
+    border: "1px solid #ccc",
+    borderRadius: "5px",
+  },
 };
 
 export default Home;

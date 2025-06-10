@@ -38,12 +38,8 @@ const Login = () => {
 
       console.log("Login response:", response.data);
       if (response.data.message === "Logged in successfully") {
-        console.log(
-          "Redirecting to:",
-          response.data.role === "ADMIN" ? "/admin" : "/home"
-        );
         if (response.data.role === "ADMIN") {
-          navigate("/admin");
+          navigate("/admin"); // Tuyến đường phía frontend
         } else {
           navigate("/home");
         }
