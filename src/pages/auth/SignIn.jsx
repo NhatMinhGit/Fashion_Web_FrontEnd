@@ -1,8 +1,9 @@
 import { useState } from "react";
 import styled from "styled-components";
-import api from "../api/api.js";
+import api from "../../api/api.js";
 import Cookies from "js-cookie";
-import { saveTokens } from "../utils/auth.js";
+import { saveTokens } from "../../utils/auth.js";
+import { useNotification } from "../../context/NotificationContext"; // ✅ Import context
 
 const Container = styled.div`
   min-height: 100vh;
@@ -78,10 +79,8 @@ const LinkText = styled.p`
 `;
 
 function SignIn() {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+  const { notify } = useNotification(); // ✅ dùng hook context
+  const [formData, setFormData] = useState({ email: "", password: "" });
   const [message, setMessage] = useState("");
 
   const handleChange = (e) => {
@@ -95,26 +94,28 @@ function SignIn() {
       const { token, refreshToken } = signInResponse.data;
       saveTokens(token, refreshToken);
 
-      // Get user info to determine role
+      // Lấy thông tin người dùng
       const userInfoResponse = await api.get("/user/info", {
         headers: { Authorization: `Bearer ${token}` },
       });
       const role = userInfoResponse.data.role;
 
-      setMessage("Login successful!");
+      notify("Đăng nhập thành công!", "success");
+
       setTimeout(() => {
         if (role === "ADMIN") {
-          window.location.href = "/admin/info";
+          window.location.href = "/admin/dashboard";
         } else if (role === "USER") {
           window.location.href = "/user/info";
         } else {
           setMessage("Unknown role");
         }
-      }, 2000);
+      }, 1000);
     } catch (error) {
-      setMessage(
-        "Error during login: " +
-          (error.response?.data?.message || "Invalid email or password")
+      notify(
+        "Đăng nhập thất bại: " +
+          (error.response?.data?.message || "Sai email hoặc mật khẩu"),
+        "error"
       );
     }
   };

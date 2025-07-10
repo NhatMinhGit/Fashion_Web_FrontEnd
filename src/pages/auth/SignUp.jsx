@@ -1,6 +1,6 @@
 import { useState } from "react";
 import styled from "styled-components";
-import api from "../api/api.js";
+import api from "../../api/api";
 
 const Container = styled.div`
   min-height: 100vh;

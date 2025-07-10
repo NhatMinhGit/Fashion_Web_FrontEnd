@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import styled from "styled-components";
-import api from "../api/api.js";
+import api from "../../api/api.js";
 import Cookies from "js-cookie";
-import { clearTokens } from "../utils/auth.js";
+import { clearTokens } from "../../utils/auth.js";
 
 const Container = styled.div`
   min-height: 100vh;
@@ -18,7 +18,7 @@ const Wrapper = styled.div`
   border-radius: 0.5rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 32rem;
+  max-width: 28rem;
 `;
 
 const Title = styled.h2`
@@ -38,8 +38,8 @@ const Message = styled.p`
 const InfoCard = styled.div`
   border: 1px solid #e5e7eb;
   border-radius: 0.5rem;
-  padding: 1.5rem;
-  margin-bottom: 1.5rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
   background-color: #f9fafb;
 `;
 
@@ -66,7 +66,7 @@ const Button = styled.button`
   }
 `;
 
-function AdminInfo() {
+function UserInfo() {
   const [userInfo, setUserInfo] = useState(null);
   const [message, setMessage] = useState("");
 
@@ -84,7 +84,7 @@ function AdminInfo() {
       .then((response) => setUserInfo(response.data))
       .catch((error) => {
         if (error.response?.status === 403) {
-          setMessage("Access denied: Admin role required");
+          setMessage("Access denied: User role required");
         } else {
           setMessage(
             "Error fetching user info: " +
@@ -102,7 +102,7 @@ function AdminInfo() {
   return (
     <Container>
       <Wrapper>
-        <Title>Admin - Information</Title>
+        <Title>Your Profile</Title>
         {message && <Message>{message}</Message>}
         {userInfo && (
           <InfoCard>
@@ -120,4 +120,4 @@ function AdminInfo() {
   );
 }
 
-export default AdminInfo;
+export default UserInfo;
