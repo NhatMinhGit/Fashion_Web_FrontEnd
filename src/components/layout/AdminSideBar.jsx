@@ -98,7 +98,11 @@ const Sidebar = ({ collapsed, setCollapsed }) => {
     { icon: <FaTachometerAlt />, label: "Dashboard", path: "/admin/dashboard" },
     { icon: <FaBox />, label: "Sản phẩm", path: "/admin/product-management" },
     // { icon: <FaArrowDown />, label: "Hạ giá", path: "/admin/discounts" },
-    // { icon: <FaGift />, label: "Khuyến mãi", path: "/admin/promotions" },
+    {
+      icon: <FaGift />,
+      label: "Khuyến mãi",
+      path: "/admin/voucher-management",
+    },
     {
       icon: <FaUsers />,
       label: "Tài khoản người dùng",

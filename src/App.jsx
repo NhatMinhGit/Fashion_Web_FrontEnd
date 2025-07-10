@@ -3,10 +3,11 @@ import SignUp from "./pages/auth/SignUp.jsx";
 import SignIn from "./pages/auth/SignIn.jsx";
 import AdminDashBoard from "./pages/admin/AdminDashBoard";
 import UserInfo from "./pages/user/UserInfo.jsx";
-import ProductManagement from "./pages/admin/ProductManagement.jsx";
-import AccountManagement from "./pages/admin/AccountManagement.jsx";
-import OrderManagement from "./pages/admin/OrderManagement.jsx";
+import ProductManagement from "./pages/admin/Product/ProductManagement.jsx";
+import AccountManagement from "./pages/admin/Account/AccountManagement.jsx";
+import OrderManagement from "./pages/admin/Order/OrderManagement.jsx";
 import { NotificationProvider } from "./context/NotificationContext.jsx";
+import VoucherManagement from "./pages/admin/Voucher/VoucherManagement.jsx";
 
 function App() {
   const [path, setPath] = useState(window.location.pathname);
@@ -33,6 +34,8 @@ function App() {
         return <AccountManagement />;
       case "/admin/order-management":
         return <OrderManagement />;
+      case "/admin/voucher-management":
+        return <VoucherManagement />;
       default:
         return <SignIn />;
     }

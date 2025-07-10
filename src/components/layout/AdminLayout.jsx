@@ -17,12 +17,12 @@ const ContentArea = styled.div`
   background-color: #f3f4f6;
   margin-left: ${(props) => (props.$collapsed ? "40px" : "240px")};
   transition: margin-left 0.3s ease;
-  padding: 15px;
 `;
 
 const PageWrapper = styled.div`
   flex: 1;
   padding: 2rem;
+  margin-left: 2rem;
 `;
 
 const AdminLayout = ({ children }) => {

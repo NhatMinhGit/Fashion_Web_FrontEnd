@@ -44,9 +44,9 @@ const Dropdown = styled.div`
   border-radius: 10px;
   width: 220px;
   z-index: 1000;
-  opacity: ${(props) => (props.show ? 1 : 0)};
-  transform: translateY(${(props) => (props.show ? "0" : "-10px")});
-  pointer-events: ${(props) => (props.show ? "auto" : "none")};
+  opacity: ${(props) => (props.$show ? 1 : 0)};
+  transform: translateY(${(props) => (props.$show ? "0" : "-10px")});
+  pointer-events: ${(props) => (props.$show ? "auto" : "none")};
   transition: opacity 0.2s ease, transform 0.2s ease;
 `;
 
@@ -101,13 +101,13 @@ const AdminHeader = ({ user }) => {
       <div ref={dropdownRef}>
         <UserButton onClick={() => setOpen(!open)}>
           <FaUserCircle size={24} />
-          <Username>{user?.username || "Unknown User"}</Username>
+          <Username>{user?.username}</Username>
         </UserButton>
 
-        <Dropdown show={open}>
+        <Dropdown $show={open}>
           <DropdownItem>
             <div>
-              <strong>{user?.username || "Unknown User"}</strong>
+              <strong>{user?.username}</strong>
             </div>
             <EmailText>{user?.email || "No email"}</EmailText>
           </DropdownItem>
