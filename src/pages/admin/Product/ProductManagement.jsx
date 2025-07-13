@@ -1,7 +1,7 @@
 import { useState } from "react";
 import styled from "styled-components";
 import AdminLayout from "../../../components/layout/AdminLayout";
-import DataTable from "../../../components/ui/DataTable";
+import DataTable from "../../../components/table/DataTable";
 import {
   Title,
   SearchBar,
@@ -10,20 +10,6 @@ import {
   Button,
   ActionButton,
 } from "../../../components/ui/SharedStyles";
-
-// const Button = styled.button`
-//   padding: 0.5rem 1rem;
-//   background-color: ${(props) => props.bg || "#4a90e2"};
-//   color: white;
-//   border: none;
-//   border-radius: 4px;
-//   font-size: 0.875rem;
-//   cursor: pointer;
-
-//   &:hover {
-//     opacity: 0.9;
-//   }
-// `;
 
 const ProductManagement = ({ user }) => {
   const [products] = useState([
@@ -72,11 +58,11 @@ const ProductManagement = ({ user }) => {
   ]);
 
   return (
-    <AdminLayout user={user}>
+    <>
       <Title>Quản lý sản phẩm</Title>
       <SearchBar>
-        <Button bg="#4caf50">Thêm sản phẩm mới</Button>
-        <Button bg="#4caf50">Thêm danh mục sản phẩm</Button>
+        <Button>Thêm sản phẩm mới</Button>
+        <Button>Thêm danh mục sản phẩm</Button>
         <Input type="text" placeholder="Nhập từ khóa" />
         <Button>Tìm kiếm</Button>
       </SearchBar>
@@ -112,7 +98,7 @@ const ProductManagement = ({ user }) => {
           </>
         )}
       />
-    </AdminLayout>
+    </>
   );
 };
 

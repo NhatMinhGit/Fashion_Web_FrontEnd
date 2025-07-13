@@ -1,49 +1,50 @@
-import { useState, useEffect } from "react";
-import SignUp from "./pages/auth/SignUp.jsx";
-import SignIn from "./pages/auth/SignIn.jsx";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+import AdminLayout from "./components/layout/AdminLayout";
+import SignUp from "./pages/auth/SignUp";
+import SignIn from "./pages/auth/SignIn";
 import AdminDashBoard from "./pages/admin/AdminDashBoard";
-import UserInfo from "./pages/user/UserInfo.jsx";
-import ProductManagement from "./pages/admin/Product/ProductManagement.jsx";
-import AccountManagement from "./pages/admin/Account/AccountManagement.jsx";
-import OrderManagement from "./pages/admin/Order/OrderManagement.jsx";
+import ProductManagement from "./pages/admin/Product/ProductManagement";
+import AccountManagement from "./pages/admin/Account/AccountManagement";
+import OrderManagement from "./pages/admin/Order/OrderManagement";
+import VoucherManagement from "./pages/admin/Voucher/VoucherManagement";
+import UserInfo from "./pages/user/UserInfo";
 import { NotificationProvider } from "./context/NotificationContext.jsx";
-import VoucherManagement from "./pages/admin/Voucher/VoucherManagement.jsx";
+import { UserProvider } from "./context/UserContext.jsx";
 
 function App() {
-  const [path, setPath] = useState(window.location.pathname);
-
-  useEffect(() => {
-    const handlePopState = () => setPath(window.location.pathname);
-    window.addEventListener("popstate", handlePopState);
-    return () => window.removeEventListener("popstate", handlePopState);
-  }, []);
-
-  const renderComponent = () => {
-    switch (path) {
-      case "/signup":
-        return <SignUp />;
-      case "/login":
-        return <SignIn />;
-      case "/admin/dashboard":
-        return <AdminDashBoard />;
-      case "/user/info":
-        return <UserInfo />;
-      case "/admin/product-management":
-        return <ProductManagement />;
-      case "/admin/account-management":
-        return <AccountManagement />;
-      case "/admin/order-management":
-        return <OrderManagement />;
-      case "/admin/voucher-management":
-        return <VoucherManagement />;
-      default:
-        return <SignIn />;
-    }
-  };
-
   return (
     <NotificationProvider>
-      <div>{renderComponent()}</div>
+      <BrowserRouter>
+        <UserProvider>
+          <Routes>
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/login" element={<SignIn />} />
+            <Route path="/user/info" element={<UserInfo />} />
+
+            {/* ✅ Layout chính của admin */}
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route path="dashboard" element={<AdminDashBoard />} />
+              <Route
+                path="product-management"
+                element={<ProductManagement />}
+              />
+              <Route
+                path="account-management"
+                element={<AccountManagement />}
+              />
+              <Route path="order-management" element={<OrderManagement />} />
+              <Route
+                path="voucher-management"
+                element={<VoucherManagement />}
+              />
+            </Route>
+
+            {/* fallback */}
+            <Route path="*" element={<SignIn />} />
+          </Routes>
+        </UserProvider>
+      </BrowserRouter>
     </NotificationProvider>
   );
 }

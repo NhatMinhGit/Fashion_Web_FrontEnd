@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import React, { useState } from "react";
+import { Outlet } from "react-router-dom";
 import styled from "styled-components";
 import AdminSidebar from "./AdminSideBar";
 import AdminHeader from "./AdminHeader";
-import api from "../../api/api.js";
-import Cookies from "js-cookie";
+import { useUser } from "../../context/UserContext";
 
 const Layout = styled.div`
   display: flex;
@@ -25,31 +25,31 @@ const PageWrapper = styled.div`
   margin-left: 2rem;
 `;
 
-const AdminLayout = ({ children }) => {
+const LoadingSpinner = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 18px;
+  color: #6b7280;
+`;
+
+const AdminLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
-  const [user, setUser] = useState(null);
+  const { user, loading } = useUser();
 
-  useEffect(() => {
-    const token = Cookies.get("token");
-    if (!token) {
-      window.location.href = "/login";
-      return;
-    }
-
-    api
-      .get("/user/info", {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((res) => setUser(res.data))
-      .catch(() => (window.location.href = "/login"));
-  }, []);
+  if (loading) {
+    return <LoadingSpinner>Loading...</LoadingSpinner>;
+  }
 
   return (
     <Layout>
       <AdminSidebar collapsed={collapsed} setCollapsed={setCollapsed} />
       <ContentArea $collapsed={collapsed}>
         <AdminHeader user={user} />
-        <PageWrapper>{children}</PageWrapper>
+        <PageWrapper>
+          <Outlet />
+        </PageWrapper>
       </ContentArea>
     </Layout>
   );

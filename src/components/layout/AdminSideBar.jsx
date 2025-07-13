@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
+import { NavLink, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import {
   FaBars,
@@ -19,19 +20,20 @@ const SidebarContainer = styled.div`
   left: 0;
   bottom: 0;
   background-color: #12172d;
-  width: ${(props) => (props.$collapsed ? "40px" : "240px")};
+  width: ${(props) => (props.$collapsed ? "50px" : "240px")};
   color: white;
   padding: 20px;
   transition: width 0.3s;
   display: flex;
   flex-direction: column;
   z-index: 1000;
+  height: 100vh;
 `;
 
 const LogoSection = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-center;
   margin-bottom: 30px;
 `;
 
@@ -50,106 +52,102 @@ const ToggleButton = styled.button`
   background: none;
   border: none;
   color: white;
-  font-size: 18px;
+  padding: 1rem;
   cursor: pointer;
-`;
-
-const SectionTitle = styled.div`
-  font-size: 11px;
-  text-transform: uppercase;
-  color: #a0a0a0;
-  margin-bottom: 10px;
-  display: ${(props) => (props.hidden ? "none" : "block")};
-`;
-
-const Menu = styled.ul`
-  list-style: none;
-  padding: 0;
-`;
-
-const MenuItem = styled.li`
-  display: flex;
-  align-items: center;
-  font-size: 14px;
-  margin-bottom: 16px;
-  cursor: pointer;
-  color: #fff;
-  transition: color 0.2s;
+  width: 100%;
 
   &:hover {
-    color: #facc15;
+    background-color: #374151;
   }
 `;
 
-const IconWrapper = styled.span`
-  font-size: 16px;
-  margin-right: ${(props) => (props.$collapsed ? "0" : "12px")};
+const NavList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0;
+`;
+
+const NavItem = styled.li`
+  margin: 0;
+`;
+
+const StyledNavLink = styled(NavLink)`
   display: flex;
-  justify-content: center;
-  width: 20px;
+  align-items: center;
+  padding: 1rem;
+  color: white;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: #374151;
+  }
+
+  &.active {
+    background-color: #3b82f6;
+    border-right: 3px solid #60a5fa;
+  }
+
+  svg {
+    margin-right: ${(props) => (props.$collapsed ? "0" : "0.75rem")};
+    min-width: 20px;
+  }
+
+  span {
+    display: ${(props) => (props.$collapsed ? "none" : "block")};
+  }
 `;
 
-const Label = styled.span`
-  display: ${(props) => (props.$collapsed ? "none" : "inline")};
-`;
+const menuItems = [
+  { icon: FaTachometerAlt, label: "Dashboard", path: "/admin/dashboard" },
+  { icon: FaBox, label: "Sản phẩm", path: "/admin/product-management" },
+  { icon: FaGift, label: "Khuyến mãi", path: "/admin/voucher-management" },
+  {
+    icon: FaUsers,
+    label: "Tài khoản người dùng",
+    path: "/admin/account-management",
+  },
+  { icon: FaShoppingCart, label: "Đơn hàng", path: "/admin/order-management" },
 
-const Sidebar = ({ collapsed, setCollapsed }) => {
-  const menuItems = [
-    { icon: <FaTachometerAlt />, label: "Dashboard", path: "/admin/dashboard" },
-    { icon: <FaBox />, label: "Sản phẩm", path: "/admin/product-management" },
-    // { icon: <FaArrowDown />, label: "Hạ giá", path: "/admin/discounts" },
-    {
-      icon: <FaGift />,
-      label: "Khuyến mãi",
-      path: "/admin/voucher-management",
-    },
-    {
-      icon: <FaUsers />,
-      label: "Tài khoản người dùng",
-      path: "/admin/account-management",
-    },
-    {
-      icon: <FaShoppingCart />,
-      label: "Đơn hàng",
-      path: "/admin/order-management",
-    },
-    // { icon: <FaChartBar />, label: "Thống kê", path: "/admin/statistics" },
-    // { icon: <FaWarehouse />, label: "Quản lý kho", path: "/admin/inventory" },
-    // { icon: <FaComments />, label: "Chatbot", path: "/admin/chatbot" },
-    // { icon: <FaUser />, label: "Thông tin Admin", path: "/admin/info" },
-  ];
+  // { icon: <FaArrowDown />, label: "Hạ giá", path: "/admin/discounts" },
+
+  // { icon: <FaChartBar />, label: "Thống kê", path: "/admin/statistics" },
+  // { icon: <FaWarehouse />, label: "Quản lý kho", path: "/admin/inventory" },
+  // { icon: <FaComments />, label: "Chatbot", path: "/admin/chatbot" },
+  // { icon: <FaUser />, label: "Thông tin Admin", path: "/admin/info" },
+];
+
+const AdminSidebar = ({ collapsed, setCollapsed }) => {
+  const location = useLocation();
 
   return (
     <SidebarContainer $collapsed={collapsed}>
       <LogoSection>
-        {!collapsed && (
-          <>
-            <Logo
-              src="/mnt/data/f28e0257-0970-4d33-baea-920b6044dd08.png"
-              alt="Logo"
-            />
-            <LogoText>MNT</LogoText>
-          </>
-        )}
         <ToggleButton onClick={() => setCollapsed(!collapsed)}>
+          <Logo
+            src="/mnt/data/f28e0257-0970-4d33-baea-920b6044dd08.png"
+            alt="Logo"
+          />
           <FaBars />
         </ToggleButton>
       </LogoSection>
 
-      <SectionTitle hidden={collapsed}>Danh mục quản lý</SectionTitle>
-      <Menu>
-        {menuItems.map((item, index) => (
-          <MenuItem
-            key={index}
-            onClick={() => (window.location.href = item.path)}
-          >
-            <IconWrapper $collapsed={collapsed}>{item.icon}</IconWrapper>
-            <Label $collapsed={collapsed}>{item.label}</Label>
-          </MenuItem>
+      <NavList>
+        {menuItems.map((item) => (
+          <NavItem key={item.path}>
+            <StyledNavLink
+              to={item.path}
+              $collapsed={collapsed}
+              className={({ isActive }) => (isActive ? "active" : "")}
+            >
+              <item.icon size={20} />
+              <span>{item.label}</span>
+            </StyledNavLink>
+          </NavItem>
         ))}
-      </Menu>
+      </NavList>
     </SidebarContainer>
   );
 };
 
-export default Sidebar;
+export default AdminSidebar;

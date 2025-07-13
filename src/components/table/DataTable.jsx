@@ -41,10 +41,53 @@ const Checkbox = styled.input.attrs({ type: "checkbox" })`
 `;
 
 const Pagination = styled.div`
-  padding: 0.75rem;
   display: flex;
   justify-content: space-between;
-  font-size: 14px;
+  align-items: center;
+  padding: 1rem;
+  border-top: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+  font-size: 0.875rem;
+  color: #4b5563;
+`;
+
+const PageButton = styled.button`
+  background-color: ${(props) => (props.disabled ? "#e5e7eb" : "#3b82f6")};
+  color: ${(props) => (props.disabled ? "#9ca3af" : "#ffffff")};
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  margin-left: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: ${(props) => (props.disabled ? "#e5e7eb" : "#2563eb")};
+  }
+`;
+
+const PageNumber = styled.button`
+  background-color: ${(props) => (props.$active ? "#3b82f6" : "transparent")};
+  color: ${(props) => (props.$active ? "#fff" : "#374151")};
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 0.4rem 0.7rem;
+  margin: 0 0.25rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: ${(props) => (props.$active ? "#2563eb" : "#e5e7eb")};
+  }
+`;
+
+const PageNumbersWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  margin-left: 0.5rem;
 `;
 
 const DataTable = ({
@@ -143,23 +186,33 @@ const DataTable = ({
       </Table>
       <Pagination>
         <span>
-          Trang {page} / {Math.ceil(data.length / pageSize)}
+          Trang <strong>{page}</strong> / {Math.ceil(data.length / pageSize)}
         </span>
-        <span>
-          <button
+        <PageNumbersWrapper>
+          <PageButton
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
           >
-            ← Trước
-          </button>
-          <button
+            Trước
+          </PageButton>
+
+          {Array.from({ length: Math.ceil(data.length / pageSize) }, (_, i) => (
+            <PageNumber
+              key={i + 1}
+              $active={page === i + 1}
+              onClick={() => setPage(i + 1)}
+            >
+              {i + 1}
+            </PageNumber>
+          ))}
+
+          <PageButton
             onClick={() => setPage((p) => p + 1)}
             disabled={page >= Math.ceil(data.length / pageSize)}
-            style={{ marginLeft: "0.5rem" }}
           >
-            Sau →
-          </button>
-        </span>
+            Sau
+          </PageButton>
+        </PageNumbersWrapper>
       </Pagination>
     </Wrapper>
   );

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import styled from "styled-components";
 import AdminLayout from "../../../components/layout/AdminLayout";
-import DataTable from "../../../components/ui/DataTable";
+import DataTable from "../../../components/table/DataTable";
 import {
   Title,
   SearchBar,
@@ -56,7 +56,7 @@ const VoucherManagement = ({ user }) => {
   );
 
   return (
-    <AdminLayout user={user}>
+    <>
       <Title>Quản lý Voucher</Title>
       <SearchBar>
         <Input placeholder="Tìm kiếm theo Id, mã voucher, tên voucher" />
@@ -77,7 +77,7 @@ const VoucherManagement = ({ user }) => {
         <AddButton>+ Gán voucher cho người dùng</AddButton>
       </SearchBar>
       <DataTable data={vouchers} columns={columns} actions={renderActions} />
-    </AdminLayout>
+    </>
   );
 };
 

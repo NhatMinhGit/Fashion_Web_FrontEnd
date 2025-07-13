@@ -36,7 +36,7 @@ function AdminDashBoard() {
   }, []);
 
   return (
-    <AdminLayout user={userInfo}>
+    <>
       <Title>Thông tin Admin</Title>
       {userInfo && (
         <InfoCard>
@@ -51,7 +51,7 @@ function AdminDashBoard() {
           </p>
         </InfoCard>
       )}
-    </AdminLayout>
+    </>
   );
 }
 

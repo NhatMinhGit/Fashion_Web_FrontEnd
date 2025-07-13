@@ -1,7 +1,7 @@
 import { useState } from "react";
 import styled from "styled-components";
 import AdminLayout from "../../../components/layout/AdminLayout";
-import DataTable from "../../../components/ui/DataTable";
+import DataTable from "../../../components/table/DataTable";
 import {
   Title,
   SearchBar,
@@ -43,7 +43,7 @@ const OrderManagement = ({ user }) => {
   };
 
   return (
-    <AdminLayout user={user}>
+    <>
       <Title>Quản lý hóa đơn</Title>
       <SearchBar>
         <Input
@@ -92,7 +92,7 @@ const OrderManagement = ({ user }) => {
           </ActionButton>
         )}
       />
-    </AdminLayout>
+    </>
   );
 };
 

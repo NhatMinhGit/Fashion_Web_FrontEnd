@@ -1,7 +1,6 @@
-import { useState } from "react";
-import styled from "styled-components";
-import AdminLayout from "../../../components/layout/AdminLayout";
-import DataTable from "../../../components/ui/DataTable";
+import { useEffect, useState } from "react";
+import api from "../../../api/api";
+import Cookies from "js-cookie";
 import {
   Title,
   SearchBar,
@@ -10,55 +9,36 @@ import {
   AddButton,
   ActionButton,
 } from "../../../components/ui/SharedStyles";
+import DataTable from "../../../components/table/DataTable";
 
-const AccountManagement = ({ user }) => {
-  const [customers] = useState([
-    {
-      id: 1,
-      name: "Nguyễn Trần Nhật Minh",
-      email: "nhatminh9103@gmail.com",
-      role: "USER",
-    },
-    {
-      id: 2,
-      name: "Nguyễn Trần Nhật Minh",
-      email: "nhatminh9100@gmail.com",
-      role: "ADMIN",
-    },
-    {
-      id: 3,
-      name: "Tun tun tun sahu",
-      email: "nhatminh91003987@gmail.com",
-      role: "USER",
-    },
-    {
-      id: 4,
-      name: "thanggg",
-      email: "nguyenduthang985@gmail.com",
-      role: "USER",
-    },
-    {
-      id: 5,
-      name: "Thang",
-      email: "nguyen@gmail.com",
-      role: "ADMIN",
-    },
-    {
-      id: 6,
-      name: "Máy ảnh Fujifilm",
-      email: "nguyenthe@gmail.com",
-      role: "USER",
-    },
-    {
-      id: 7,
-      name: "Test",
-      email: "test@gmail.com",
-      role: "USER",
-    },
-  ]);
+const AccountManagement = () => {
+  const [accounts, setAccounts] = useState([]);
+
+  useEffect(() => {
+    const token = Cookies.get("token");
+    if (!token) {
+      window.location.href = "/login";
+      return;
+    }
+
+    api
+      .get("/admin/users", {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => setAccounts(res.data))
+      .catch((err) => {
+        console.error("Lỗi lấy danh sách user:", err);
+        if (err.response?.status === 401 || err.response?.status === 403) {
+          alert("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
+          Cookies.remove("token");
+          Cookies.remove("refreshToken");
+          window.location.href = "/login";
+        }
+      });
+  }, []);
 
   return (
-    <AdminLayout user={user}>
+    <>
       <Title>Quản lý tài khoản khách hàng</Title>
       <SearchBar>
         <Input placeholder="Tìm theo ID, tên, email..." />
@@ -66,7 +46,7 @@ const AccountManagement = ({ user }) => {
         <AddButton>Thêm tài khoản</AddButton>
       </SearchBar>
       <DataTable
-        data={customers}
+        data={accounts}
         columns={[
           { key: "id", label: "ID" },
           { key: "name", label: "Tên" },
@@ -81,7 +61,7 @@ const AccountManagement = ({ user }) => {
           </>
         )}
       />
-    </AdminLayout>
+    </>
   );
 };
 

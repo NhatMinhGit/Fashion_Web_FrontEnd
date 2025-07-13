@@ -3,7 +3,8 @@ import styled from "styled-components";
 import api from "../../api/api.js";
 import Cookies from "js-cookie";
 import { saveTokens } from "../../utils/auth.js";
-import { useNotification } from "../../context/NotificationContext"; // ✅ Import context
+import { useNotification } from "../../context/NotificationContext";
+import { Link } from "react-router-dom"; // ✅ thêm dòng này
 
 const Container = styled.div`
   min-height: 100vh;
@@ -149,7 +150,8 @@ function SignIn() {
           <Button type="submit">Log In</Button>
         </form>
         <LinkText>
-          Don't have an account? <a href="/signup">Sign up</a>
+          Don't have an account? <Link to="/signup">Sign up</Link>{" "}
+          {/* ✅ dùng Link thay vì <a href=...> */}
         </LinkText>
       </FormWrapper>
     </Container>

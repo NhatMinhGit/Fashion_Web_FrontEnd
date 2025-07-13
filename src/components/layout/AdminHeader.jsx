@@ -1,8 +1,9 @@
+import React, { useState, useRef, useEffect, memo } from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { useState, useRef, useEffect } from "react";
 import { FaUserCircle } from "react-icons/fa";
-import { clearTokens } from "../../utils/auth";
-import { useNotification } from "../../context/NotificationContext"; // ✅ Thêm dòng này
+import { useUser } from "../../context/UserContext";
+import { useNotification } from "../../context/NotificationContext";
 
 const HeaderWrapper = styled.header`
   background: white;
@@ -72,17 +73,20 @@ const EmailText = styled.div`
   color: #6b7280;
 `;
 
-const AdminHeader = ({ user }) => {
+const AdminHeader = memo(() => {
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef(null);
-  const { notify } = useNotification(); // ✅ Sử dụng hook context
+  const { user, logout } = useUser();
+  const { notify } = useNotification();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
-    clearTokens();
-    notify("Đăng xuất thành công", "success"); // ✅ Gọi thông báo
-    setTimeout(() => {
-      window.location.href = "/login";
-    }, 1000); // Chờ một chút để người dùng thấy thông báo
+    logout();
+    notify("Đăng xuất thành công", "success");
+  };
+
+  const handleGoHome = () => {
+    navigate("/");
   };
 
   // Đóng dropdown khi click ra ngoài
@@ -111,7 +115,7 @@ const AdminHeader = ({ user }) => {
             </div>
             <EmailText>{user?.email || "No email"}</EmailText>
           </DropdownItem>
-          <DropdownItem onClick={() => (window.location.href = "/")}>
+          <DropdownItem onClick={handleGoHome}>
             Truy cập trang Home
           </DropdownItem>
           <DropdownItem onClick={handleLogout}>Đăng xuất</DropdownItem>
@@ -119,6 +123,8 @@ const AdminHeader = ({ user }) => {
       </div>
     </HeaderWrapper>
   );
-};
+});
+
+AdminHeader.displayName = "AdminHeader";
 
 export default AdminHeader;
