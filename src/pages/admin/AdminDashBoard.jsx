@@ -3,6 +3,7 @@ import api from "../../api/api.js";
 import Cookies from "js-cookie";
 import AdminLayout from "../../components/layout/AdminLayout.jsx";
 import styled from "styled-components";
+import { useUser } from "../../context/UserContext";
 
 const Title = styled.h2`
   font-size: 1.5rem;
@@ -18,39 +19,26 @@ const InfoCard = styled.div`
 `;
 
 function AdminDashBoard() {
-  const [userInfo, setUserInfo] = useState(null);
+  const { user, loading } = useUser();
 
-  useEffect(() => {
-    const token = Cookies.get("token");
-    if (!token) {
-      window.location.href = "/login";
-      return;
-    }
+  if (loading) return <p>Loading...</p>;
 
-    api
-      .get("/user/info", {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((res) => setUserInfo(res.data))
-      .catch(() => (window.location.href = "/login"));
-  }, []);
+  if (!user) return <p>Không tìm thấy thông tin người dùng.</p>;
 
   return (
     <>
       <Title>Thông tin Admin</Title>
-      {userInfo && (
-        <InfoCard>
-          <p>
-            <strong>Username:</strong> {userInfo.username}
-          </p>
-          <p>
-            <strong>Email:</strong> {userInfo.email}
-          </p>
-          <p>
-            <strong>Role:</strong> {userInfo.role}
-          </p>
-        </InfoCard>
-      )}
+      <InfoCard>
+        <p>
+          <strong>Username:</strong> {user.username}
+        </p>
+        <p>
+          <strong>Email:</strong> {user.email}
+        </p>
+        <p>
+          <strong>Role:</strong> {user.role}
+        </p>
+      </InfoCard>
     </>
   );
 }

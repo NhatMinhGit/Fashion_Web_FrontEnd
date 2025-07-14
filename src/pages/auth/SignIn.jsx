@@ -1,78 +1,114 @@
 import { useState } from "react";
 import styled from "styled-components";
 import api from "../../api/api.js";
-import Cookies from "js-cookie";
 import { saveTokens } from "../../utils/auth.js";
 import { useNotification } from "../../context/NotificationContext";
-import { Link } from "react-router-dom"; // ✅ thêm dòng này
+import { Link, useNavigate } from "react-router-dom";
 
 const Container = styled.div`
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #f3f4f6;
+  background-color: #f9fafb; /* Gray-50 background */
+  padding: 1rem;
 `;
 
+// ⭐️ Card
 const FormWrapper = styled.div`
-  background-color: white;
-  padding: 2rem;
-  border-radius: 0.5rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
+  padding: 2rem 2.5rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
   width: 100%;
-  max-width: 28rem;
+  max-width: 400px;
 `;
 
+// ⭐️ Title
 const Title = styled.h2`
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-bottom: 1.5rem;
+  font-size: 1.75rem;
+  font-weight: 700;
   text-align: center;
+  color: #1f2937; /* Gray-800 */
+  margin-bottom: 2rem;
 `;
 
+// ⭐️ Error Message
 const Message = styled.p`
-  margin-bottom: 1rem;
+  background-color: #fef2f2;
+  color: #b91c1c;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
   text-align: center;
-  color: #dc2626;
-`;
-
-const FormGroup = styled.div`
   margin-bottom: 1rem;
+  font-size: 0.95rem;
 `;
 
+// ⭐️ Form Group
+const FormGroup = styled.div`
+  margin-bottom: 1.25rem;
+`;
+
+// ⭐️ Label
 const Label = styled.label`
   display: block;
-  color: #374151;
+  color: #374151; /* Gray-700 */
+  font-weight: 500;
   margin-bottom: 0.5rem;
+  font-size: 0.95rem;
 `;
 
+// ⭐️ Input
 const Input = styled.input`
   width: 100%;
-  padding: 0.5rem 0.75rem;
+  padding: 0.6rem 0.75rem;
   border: 1px solid #d1d5db;
-  border-radius: 0.25rem;
+  border-radius: 0.375rem;
   font-size: 1rem;
+  color: #111827;
+  transition: border-color 0.2s;
+
+  &:focus {
+    border-color: #3b82f6;
+    outline: none;
+  }
 `;
 
+// ⭐️ Submit Button
 const Button = styled.button`
   width: 100%;
   background-color: #3b82f6;
   color: white;
-  padding: 0.5rem;
-  border-radius: 0.25rem;
+  padding: 0.65rem;
+  border: none;
+  border-radius: 0.375rem;
   font-size: 1rem;
+  font-weight: 500;
   cursor: pointer;
+  transition: background-color 0.2s;
+
   &:hover {
     background-color: #2563eb;
   }
+
+  &:disabled {
+    background-color: #93c5fd;
+    cursor: not-allowed;
+  }
 `;
 
+// ⭐️ Link Text
 const LinkText = styled.p`
-  margin-top: 1rem;
+  margin-top: 1.5rem;
   text-align: center;
+  font-size: 0.95rem;
+  color: #4b5563;
+
   a {
     color: #3b82f6;
     text-decoration: none;
+    font-weight: 500;
+
     &:hover {
       text-decoration: underline;
     }
@@ -80,7 +116,8 @@ const LinkText = styled.p`
 `;
 
 function SignIn() {
-  const { notify } = useNotification(); // ✅ dùng hook context
+  const { notify } = useNotification();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [message, setMessage] = useState("");
 
@@ -95,22 +132,16 @@ function SignIn() {
       const { token, refreshToken } = signInResponse.data;
       saveTokens(token, refreshToken);
 
-      // Lấy thông tin người dùng
-      const userInfoResponse = await api.get("/user/info", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      // Lấy role người dùng
+      const userInfoResponse = await api.get("/user/info");
       const role = userInfoResponse.data.role;
 
       notify("Đăng nhập thành công!", "success");
 
       setTimeout(() => {
-        if (role === "ADMIN") {
-          window.location.href = "/admin/dashboard";
-        } else if (role === "USER") {
-          window.location.href = "/user/info";
-        } else {
-          setMessage("Unknown role");
-        }
+        if (role === "ADMIN") navigate("/admin/dashboard", { replace: true });
+        else if (role === "USER") navigate("/user/info", { replace: true });
+        else setMessage("Unknown role");
       }, 1000);
     } catch (error) {
       notify(
@@ -150,8 +181,7 @@ function SignIn() {
           <Button type="submit">Log In</Button>
         </form>
         <LinkText>
-          Don't have an account? <Link to="/signup">Sign up</Link>{" "}
-          {/* ✅ dùng Link thay vì <a href=...> */}
+          Don't have an account? <Link to="/signup">Sign up</Link>
         </LinkText>
       </FormWrapper>
     </Container>

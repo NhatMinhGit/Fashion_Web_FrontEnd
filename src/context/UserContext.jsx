@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/api.js";
 import Cookies from "js-cookie";
+import { clearTokens } from "../utils/auth.js";
 
 const UserContext = createContext();
 
@@ -15,14 +16,13 @@ export const UserProvider = ({ children }) => {
     const fetchUserInfo = async () => {
       const token = Cookies.get("token");
       if (!token) {
-        navigate("/login", { replace: true });
+        setLoading(false);
         return;
       }
 
       try {
-        const res = await api.get("/user/info", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await api.get("/user/info");
+
         setUser(res.data);
       } catch (error) {
         setError(error);
@@ -37,8 +37,7 @@ export const UserProvider = ({ children }) => {
   }, [navigate]);
 
   const logout = () => {
-    Cookies.remove("token");
-    Cookies.remove("userRole");
+    clearTokens();
     setUser(null);
     navigate("/login", { replace: true });
   };

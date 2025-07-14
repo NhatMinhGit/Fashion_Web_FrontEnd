@@ -1,6 +1,7 @@
 import { useState } from "react";
 import styled from "styled-components";
 import api from "../../api/api";
+import { Link, useNavigate } from "react-router-dom";
 
 const Container = styled.div`
   min-height: 100vh;
@@ -76,6 +77,7 @@ const LinkText = styled.p`
 `;
 
 function SignUp() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -92,7 +94,7 @@ function SignUp() {
     try {
       await api.post("/auth/signup", formData);
       setMessage("Sign up successful! Please log in.");
-      setTimeout(() => (window.location.href = "/login"), 2000);
+      setTimeout(() => navigate("/login", { replace: true }), 2000);
     } catch (error) {
       setMessage(
         "Error during sign up: " +
@@ -140,7 +142,7 @@ function SignUp() {
           <Button type="submit">Sign Up</Button>
         </form>
         <LinkText>
-          Already have an account? <a href="/login">Log in</a>
+          Already have an account? <Link to="/login">Log in</Link>
         </LinkText>
       </FormWrapper>
     </Container>

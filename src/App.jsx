@@ -11,6 +11,10 @@ import VoucherManagement from "./pages/admin/Voucher/VoucherManagement";
 import UserInfo from "./pages/user/UserInfo";
 import { NotificationProvider } from "./context/NotificationContext.jsx";
 import { UserProvider } from "./context/UserContext.jsx";
+import ProtectedRoute from "./components/route/ProtectedRoute.jsx";
+import GuestRoute from "./components/route/GuestRoute.jsx";
+import AddUserPage from "./pages/admin/Account/AddUserPage";
+import EditUserPage from "./pages/admin/Account/EditUserPage";
 
 function App() {
   return (
@@ -18,12 +22,32 @@ function App() {
       <BrowserRouter>
         <UserProvider>
           <Routes>
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/login" element={<SignIn />} />
+            <Route
+              path="/login"
+              element={
+                <GuestRoute>
+                  <SignIn />
+                </GuestRoute>
+              }
+            />
+            <Route
+              path="/signup"
+              element={
+                <GuestRoute>
+                  <SignUp />
+                </GuestRoute>
+              }
+            />
             <Route path="/user/info" element={<UserInfo />} />
 
-            {/* ✅ Layout chính của admin */}
-            <Route path="/admin" element={<AdminLayout />}>
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute allowedRoles={["ADMIN"]}>
+                  <AdminLayout />
+                </ProtectedRoute>
+              }
+            >
               <Route path="dashboard" element={<AdminDashBoard />} />
               <Route
                 path="product-management"
@@ -33,6 +57,13 @@ function App() {
                 path="account-management"
                 element={<AccountManagement />}
               />
+
+              <Route path="account-management/add" element={<AddUserPage />} />
+              <Route
+                path="account-management/edit/:userId"
+                element={<EditUserPage />}
+              />
+
               <Route path="order-management" element={<OrderManagement />} />
               <Route
                 path="voucher-management"

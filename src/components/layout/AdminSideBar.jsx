@@ -13,6 +13,7 @@ import {
   FaComments,
   FaTachometerAlt,
 } from "react-icons/fa";
+import { useUser } from "../../context/UserContext";
 
 const SidebarContainer = styled.div`
   position: fixed; /* 👈 thêm dòng này */
@@ -98,26 +99,42 @@ const StyledNavLink = styled(NavLink)`
   }
 `;
 
-const menuItems = [
-  { icon: FaTachometerAlt, label: "Dashboard", path: "/admin/dashboard" },
-  { icon: FaBox, label: "Sản phẩm", path: "/admin/product-management" },
-  { icon: FaGift, label: "Khuyến mãi", path: "/admin/voucher-management" },
-  {
-    icon: FaUsers,
-    label: "Tài khoản người dùng",
-    path: "/admin/account-management",
-  },
-  { icon: FaShoppingCart, label: "Đơn hàng", path: "/admin/order-management" },
-
-  // { icon: <FaArrowDown />, label: "Hạ giá", path: "/admin/discounts" },
-
-  // { icon: <FaChartBar />, label: "Thống kê", path: "/admin/statistics" },
-  // { icon: <FaWarehouse />, label: "Quản lý kho", path: "/admin/inventory" },
-  // { icon: <FaComments />, label: "Chatbot", path: "/admin/chatbot" },
-  // { icon: <FaUser />, label: "Thông tin Admin", path: "/admin/info" },
-];
-
 const AdminSidebar = ({ collapsed, setCollapsed }) => {
+  const { user, logout } = useUser();
+  const menuItems = [
+    ...(user?.role === "ADMIN"
+      ? [
+          {
+            icon: FaTachometerAlt,
+            label: "Dashboard",
+            path: "/admin/dashboard",
+          },
+          { icon: FaBox, label: "Sản phẩm", path: "/admin/product-management" },
+          {
+            icon: FaGift,
+            label: "Khuyến mãi",
+            path: "/admin/voucher-management",
+          },
+          {
+            icon: FaUsers,
+            label: "Tài khoản người dùng",
+            path: "/admin/account-management",
+          },
+          {
+            icon: FaShoppingCart,
+            label: "Đơn hàng",
+            path: "/admin/order-management",
+          },
+
+          // { icon: <FaArrowDown />, label: "Hạ giá", path: "/admin/discounts" },
+
+          // { icon: <FaChartBar />, label: "Thống kê", path: "/admin/statistics" },
+          // { icon: <FaWarehouse />, label: "Quản lý kho", path: "/admin/inventory" },
+          // { icon: <FaComments />, label: "Chatbot", path: "/admin/chatbot" },
+          // { icon: <FaUser />, label: "Thông tin Admin", path: "/admin/info" },
+        ]
+      : []),
+  ];
   const location = useLocation();
 
   return (
