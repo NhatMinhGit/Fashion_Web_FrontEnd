@@ -5,16 +5,26 @@ const Wrapper = styled.div`
   background: white;
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
+  overflow-x: auto;
 `;
 
 const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
+  min-width: 600px;
+
+  @media (max-width: 768px) {
+    border: 0;
+    min-width: auto;
+  }
 `;
 
 const Thead = styled.thead`
   background-color: #e6f0fa;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
 
 const Th = styled.th`
@@ -25,14 +35,37 @@ const Th = styled.th`
   cursor: pointer;
 `;
 
-const Td = styled.td`
-  padding: 0.75rem;
-  border-top: 1px solid #eee;
-`;
-
 const Tr = styled.tr`
   &:hover {
     background-color: #f9fafb;
+  }
+
+  @media (max-width: 768px) {
+    display: block;
+    margin-bottom: 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 0.5rem;
+    background-color: #fff;
+  }
+`;
+
+const Td = styled.td`
+  padding: 0.75rem;
+  border-top: 1px solid #eee;
+
+  @media (max-width: 768px) {
+    display: block;
+    border: none;
+    padding: 0.5rem 0;
+
+    &::before {
+      content: attr(data-label);
+      font-weight: 600;
+      display: block;
+      color: #6b7280;
+      margin-bottom: 0.25rem;
+    }
   }
 `;
 
@@ -49,6 +82,12 @@ const Pagination = styled.div`
   background-color: #f9fafb;
   font-size: 0.875rem;
   color: #4b5563;
+  flex-wrap: wrap;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 `;
 
 const PageButton = styled.button`
@@ -94,13 +133,13 @@ const DataTable = ({
   data = [],
   columns = [],
   loading = false,
-  pageSize = 6,
   actions = () => [],
+  currentPage = 1,
+  totalPages = 1,
+  onPageChange = () => {},
 }) => {
   const [sortField, setSortField] = useState(null);
   const [asc, setAsc] = useState(true);
-  const [page, setPage] = useState(1);
-  const [selected, setSelected] = useState([]);
 
   const handleSort = (field) => {
     setAsc(field === sortField ? !asc : true);
@@ -115,26 +154,21 @@ const DataTable = ({
       })
     : data;
 
-  const paginatedData = sortedData.slice(
-    (page - 1) * pageSize,
-    page * pageSize
-  );
+  // const toggleSelect = (id) => {
+  //   setSelected((prev) =>
+  //     prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+  //   );
+  // };
 
-  const toggleSelect = (id) => {
-    setSelected((prev) =>
-      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
-    );
-  };
-
-  const toggleSelectAll = () => {
-    const currentPageIds = paginatedData.map((row) => row.id);
-    const allSelected = currentPageIds.every((id) => selected.includes(id));
-    if (allSelected) {
-      setSelected((prev) => prev.filter((id) => !currentPageIds.includes(id)));
-    } else {
-      setSelected((prev) => [...new Set([...prev, ...currentPageIds])]);
-    }
-  };
+  // const toggleSelectAll = () => {
+  //   const currentPageIds = paginatedData.map((row) => row.id);
+  //   const allSelected = currentPageIds.every((id) => selected.includes(id));
+  //   if (allSelected) {
+  //     setSelected((prev) => prev.filter((id) => !currentPageIds.includes(id)));
+  //   } else {
+  //     setSelected((prev) => [...new Set([...prev, ...currentPageIds])]);
+  //   }
+  // };
 
   return (
     <Wrapper>
@@ -162,12 +196,12 @@ const DataTable = ({
             <tr>
               <Td colSpan={columns.length + 2}>Đang tải dữ liệu...</Td>
             </tr>
-          ) : paginatedData.length === 0 ? (
+          ) : sortedData.length === 0 ? (
             <tr>
               <Td colSpan={columns.length + 2}>Không có dữ liệu</Td>
             </tr>
           ) : (
-            paginatedData.map((row) => (
+            sortedData.map((row) => (
               <Tr key={row.id}>
                 {/* <Td>
                   <Checkbox
@@ -176,7 +210,9 @@ const DataTable = ({
                   />
                 </Td> */}
                 {columns.map((col) => (
-                  <Td key={col.key}>{row[col.key]}</Td>
+                  <Td key={col.key} data-label={col.label}>
+                    {row[col.key]}
+                  </Td>
                 ))}
                 <Td>{actions(row)}</Td>
               </Tr>
@@ -186,29 +222,29 @@ const DataTable = ({
       </Table>
       <Pagination>
         <span>
-          Trang <strong>{page}</strong> / {Math.ceil(data.length / pageSize)}
+          Trang <strong>{currentPage}</strong> / {totalPages}
         </span>
         <PageNumbersWrapper>
           <PageButton
-            onClick={() => setPage((p) => Math.max(1, p - 1))}
-            disabled={page === 1}
+            onClick={() => onPageChange(currentPage - 1)}
+            disabled={currentPage === 1}
           >
             Trước
           </PageButton>
 
-          {Array.from({ length: Math.ceil(data.length / pageSize) }, (_, i) => (
+          {Array.from({ length: totalPages }, (_, i) => (
             <PageNumber
               key={i + 1}
-              $active={page === i + 1}
-              onClick={() => setPage(i + 1)}
+              $active={currentPage === i + 1}
+              onClick={() => onPageChange(i + 1)}
             >
               {i + 1}
             </PageNumber>
           ))}
 
           <PageButton
-            onClick={() => setPage((p) => p + 1)}
-            disabled={page >= Math.ceil(data.length / pageSize)}
+            onClick={() => onPageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
           >
             Sau
           </PageButton>

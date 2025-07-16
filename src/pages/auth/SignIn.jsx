@@ -5,35 +5,68 @@ import { saveTokens } from "../../utils/auth.js";
 import { useNotification } from "../../context/NotificationContext";
 import { Link, useNavigate } from "react-router-dom";
 
-const Container = styled.div`
+const Wrapper = styled.div`
+  display: flex;
   min-height: 100vh;
+  background-color: #f3f4f6; /* Gray-100 */
+`;
+
+// Left image section
+const Left = styled.div`
+  flex: 1;
+  display: none;
+
+  @media (min-width: 1024px) {
+    display: block;
+  }
+
+  img {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100vh;
+    object-fit: cover;
+  }
+`;
+
+// Right form section
+const Right = styled.div`
+  flex: 1;
+  width: 100%;
+  padding: 2rem;
+  background-color: #ffffff;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #f9fafb; /* Gray-50 background */
-  padding: 1rem;
+
+  @media (min-width: 640px) {
+    padding: 5rem 2rem;
+  }
+
+  @media (min-width: 768px) {
+    padding: 8rem 4rem;
+  }
+
+  @media (min-width: 1024px) {
+    padding: 9rem 3rem;
+  }
 `;
 
-// ⭐️ Card
 const FormWrapper = styled.div`
-  background-color: #ffffff;
-  padding: 2rem 2.5rem;
-  border-radius: 0.75rem;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
   width: 100%;
   max-width: 400px;
+  background-color: #ffffff;
 `;
 
-// ⭐️ Title
-const Title = styled.h2`
-  font-size: 1.75rem;
-  font-weight: 700;
-  text-align: center;
+const Title = styled.h1`
+  font-size: 2rem;
+  font-weight: 600;
   color: #1f2937; /* Gray-800 */
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
 `;
 
-// ⭐️ Error Message
 const Message = styled.p`
   background-color: #fef2f2;
   color: #b91c1c;
@@ -44,12 +77,10 @@ const Message = styled.p`
   font-size: 0.95rem;
 `;
 
-// ⭐️ Form Group
 const FormGroup = styled.div`
   margin-bottom: 1.25rem;
 `;
 
-// ⭐️ Label
 const Label = styled.label`
   display: block;
   color: #374151; /* Gray-700 */
@@ -58,7 +89,6 @@ const Label = styled.label`
   font-size: 0.95rem;
 `;
 
-// ⭐️ Input
 const Input = styled.input`
   width: 100%;
   padding: 0.6rem 0.75rem;
@@ -74,7 +104,37 @@ const Input = styled.input`
   }
 `;
 
-// ⭐️ Submit Button
+const RememberContainer = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+
+  label {
+    margin-left: 0.5rem;
+    color: #4b5563; /* Gray-600 */
+    font-size: 0.95rem;
+  }
+
+  input {
+    accent-color: #3b82f6;
+  }
+`;
+
+const ForgotPassword = styled.div`
+  margin-bottom: 1.5rem;
+  text-align: right;
+
+  a {
+    color: #3b82f6;
+    font-size: 0.95rem;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+`;
+
 const Button = styled.button`
   width: 100%;
   background-color: #3b82f6;
@@ -97,7 +157,6 @@ const Button = styled.button`
   }
 `;
 
-// ⭐️ Link Text
 const LinkText = styled.p`
   margin-top: 1.5rem;
   text-align: center;
@@ -120,6 +179,7 @@ function SignIn() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [message, setMessage] = useState("");
+  const [remember, setRemember] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -153,38 +213,50 @@ function SignIn() {
   };
 
   return (
-    <Container>
-      <FormWrapper>
-        <Title>Log In</Title>
-        {message && <Message>{message}</Message>}
-        <form onSubmit={handleSubmit}>
-          <FormGroup>
-            <Label>Email</Label>
-            <Input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
-          </FormGroup>
-          <FormGroup>
-            <Label>Password</Label>
-            <Input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-            />
-          </FormGroup>
-          <Button type="submit">Log In</Button>
-        </form>
-        <LinkText>
-          Don't have an account? <Link to="/signup">Sign up</Link>
-        </LinkText>
-      </FormWrapper>
-    </Container>
+    <Wrapper>
+      <Left>
+        <img
+          src="https://placehold.co/800x/667fff/ffffff.png?text=Your+Image&font=Montserrat"
+          alt="Login Illustration"
+        />
+      </Left>
+      <Right>
+        <FormWrapper>
+          <Title>Đăng nhập</Title>
+          {message && <Message>{message}</Message>}
+          <form onSubmit={handleSubmit}>
+            <FormGroup>
+              <Label>Email</Label>
+              <Input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                required
+              />
+            </FormGroup>
+            <FormGroup>
+              <Label>Password</Label>
+              <Input
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+              />
+            </FormGroup>
+
+            <ForgotPassword>
+              <Link to="/forgot-password">Quên mật khẩu?</Link>
+            </ForgotPassword>
+            <Button type="submit">Đăng nhập</Button>
+          </form>
+          <LinkText>
+            Bạn chưa có tài khoản? <Link to="/signup">Đăng ký ở đây</Link>
+          </LinkText>
+        </FormWrapper>
+      </Right>
+    </Wrapper>
   );
 }
 
